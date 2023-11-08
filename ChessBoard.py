@@ -50,19 +50,71 @@ class ChessBoard:
         
         elif piece.pieceType == "Queen":
             if endLoc[0] == startLoc[0]: # If it's moving up/down
-                pass
+                for i in range (min(endLoc[0],startLoc[0])+1,max(endLoc[0],startLoc[0])):
+                    if self.getPiece((i,endLoc[1])) != None: # If there are pieces between the starting pos and ending pos
+                        return False
+                return True
             elif endLoc[1] == startLoc[1]: # If it's moving left/right
-                pass
-            elif abs(endLoc[0] - startLoc[0]) == abs(endLoc[1] - startLoc[1]): # If it's moving diagonally
-                pass
+                for i in range (min(endLoc[1],startLoc[1])+1,max(endLoc[1],startLoc[1])):
+                    if self.getPiece((i,endLoc[0])) != None: # If there are pieces between the starting pos and ending pos
+                        return False
+                return True
+            elif endLoc[0] - startLoc[0] == endLoc[1] - startLoc[1]: # If it's moving along y = x
+                for i in range(1,abs(endLoc[0]-startLoc[0])):
+                    if self.getPiece(min(endLoc[0],startLoc[0])+i,min(endLoc[1],startLoc[1])+i) is not None:
+                        return False
+                return True
+            elif endLoc[0] - startLoc[0] == -(endLoc[1] - startLoc[1]): # If it's moving along y = -x
+                for i in range(1,abs(endLoc[0]-startLoc[0])):
+                    if self.getPiece(min(endLoc[0],startLoc[0])+i,max(endLoc[1],startLoc[1])-i) is not None:
+                        return False
             else:
                 return False
+            
+        elif piece.pieceType == "Knight":
+            return (abs(endLoc[0] - startLoc[0]) == 3 and abs(endLoc[1] - startLoc[1]) == 2) or \
+                    (abs(endLoc[0] - startLoc[0]) == 2 and abs(endLoc[1] - startLoc[1]) == 3)
+        
+        elif piece.pieceType == "Rook":
+            if endLoc[0] == startLoc[0]: # If it's moving up/down
+                for i in range (min(endLoc[0],startLoc[0])+1,max(endLoc[0],startLoc[0])):
+                    if self.getPiece((i,endLoc[1])) != None: # If there are pieces between the starting pos and ending pos
+                        return False
+                return True
+            elif endLoc[1] == startLoc[1]: # If it's moving left/right
+                for i in range (min(endLoc[1],startLoc[1])+1,max(endLoc[1],startLoc[1])):
+                    if self.getPiece((i,endLoc[0])) != None: # If there are pieces between the starting pos and ending pos
+                        return False
+                return True
+            else:
+                return False
+
+        elif piece.pieceType == "Bishop":
+            if endLoc[0] - startLoc[0] == endLoc[1] - startLoc[1]: # If it's moving along y = x
+                for i in range(1,abs(endLoc[0]-startLoc[0])):
+                    if self.getPiece(min(endLoc[0],startLoc[0])+i,min(endLoc[1],startLoc[1])+i) is not None:
+                        return False
+                return True
+            elif endLoc[0] - startLoc[0] == -(endLoc[1] - startLoc[1]): # If it's moving along y = -x
+                for i in range(1,abs(endLoc[0]-startLoc[0])):
+                    if self.getPiece(min(endLoc[0],startLoc[0])+i,max(endLoc[1],startLoc[1])-i) is not None:
+                        return False
+            else:
+                return False
+    
+    def getPiece(self,location):
+        # Returns the piece in the given location or returns None if no piece is there or if it's an invalid lcoation
+        if not self.isValidLocation(location):
+            return None
+        
+        return self.board[location[1]][location[0]]
 
     def isValidLocation(self, location):
         # Checks whether or not the given location is on the game board
         return location[0] >= 0 and location[1] >= 0 and location[0] < self.sizeX and location[1] < self.sizeY
     
     def isWhiteInCheck(self):
+        # Checks the current game board for whether or not the white king is in check
         for piece in self.whitePieces:
             if piece.getPieceType() == "King":
                 whiteKingPos = piece.getPos()
@@ -74,6 +126,7 @@ class ChessBoard:
         return False
     
     def isBlackInCheck(self):
+        # Checks the current game board for whether or not the black king is in check
         for piece in self.blackPieces:
             if piece.getPieceType() == "King":
                 whiteKingPos = piece.getPos()
