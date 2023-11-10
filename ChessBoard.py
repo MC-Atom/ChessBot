@@ -1,14 +1,14 @@
-import ChessPiece
+from ChessPiece import ChessPiece
 
 class ChessBoard:
 
     def __init__(self):
         self.sizeX = 5 # how many squares wide the board is
         self.sizeY = 6 # how many squares tall the board is
-        self.whitePieces = [ChessPiece("Knight",True),ChessPiece("Queen",True),ChessPiece("King",True),ChessPiece("Bishop",True),ChessPiece("Rook",True),
-                            ChessPiece("Pawn",True),ChessPiece("Pawn",True),ChessPiece("Pawn",True),ChessPiece("Pawn",True),ChessPiece("Pawn",True)]
-        self.blackPieces = [ChessPiece("Knight",False),ChessPiece("Queen",False),ChessPiece("King",False),ChessPiece("Bishop",False),ChessPiece("Rook",False),
-                            ChessPiece("Pawn",False),ChessPiece("Pawn",False),ChessPiece("Pawn",False),ChessPiece("Pawn",False),ChessPiece("Pawn",False)]
+        self.whitePieces = [ChessPiece("Knight",True,(0,0)),ChessPiece("Queen",True,(1,0)),ChessPiece("King",True,(2,0)),ChessPiece("Bishop",True,(3,0)),ChessPiece("Rook",True,(4,0)),
+                            ChessPiece("Pawn",True,(0,1)),ChessPiece("Pawn",True,(1,1)),ChessPiece("Pawn",True,(2,1)),ChessPiece("Pawn",True,(3,1)),ChessPiece("Pawn",True,(4,1))]
+        self.blackPieces = [ChessPiece("Knight",False,(0,5)),ChessPiece("Queen",False,(1,5)),ChessPiece("King",False,(2,5)),ChessPiece("Bishop",False,(3,5)),ChessPiece("Rook",False,(4,5)),
+                            ChessPiece("Pawn",False,(0,4)),ChessPiece("Pawn",False,(1,4)),ChessPiece("Pawn",False,(2,4)),ChessPiece("Pawn",False,(3,4)),ChessPiece("Pawn",False,(4,4))]
         self.board =  [[self.whitePieces[0],self.whitePieces[1],self.whitePieces[2],self.whitePieces[3],self.whitePieces[4]],
                        [self.whitePieces[5],self.whitePieces[6],self.whitePieces[7],self.whitePieces[8],self.whitePieces[9]],
                        [None,None,None,None,None],
@@ -190,3 +190,22 @@ class ChessBoard:
     def getBoard(self):
         return self.board
     
+    def toString(self):
+        output = "   | "
+        for i in range(self.sizeX):
+            output += chr(i + 65)
+            output += " | "
+        
+        for j in range(self.sizeY):
+            output += "\n"
+            output += "-------------------------\n"
+            output += str(j+1) + "  |"
+            for i in range(self.sizeX):
+                if self.board[j][i] != None:
+                    output += self.board[j][i].toString()
+                else:
+                    output += "  "
+                output += " |"
+        output += "\n"
+        output += "-------------------------"
+        return output

@@ -26,6 +26,25 @@ class ChessPiece:
 
     def isAlive(self):
         return self.isAlive
-  
-  
-          
+
+    def toString(self):
+        output = ""
+        if self.isWhite:
+            output += "W"
+        else:
+            output += "B"
+        
+        if self.pieceType == "Pawn":
+            output += "p"
+        elif self.pieceType == "King":
+            output += "k"
+        elif self.pieceType == "Queen":
+            output += "q"
+        elif self.pieceType == "Knight":
+            output += "n"
+        elif self.pieceType == "Rook":
+            output += "r"
+        elif self.pieceType == "Bishop":
+            output += "b"
+        
+        return output
