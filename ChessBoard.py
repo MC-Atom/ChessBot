@@ -15,6 +15,24 @@ class ChessBoard:
                        [None,None,None,None,None],
                        [self.blackPieces[5],self.blackPieces[6],self.blackPieces[7],self.blackPieces[8],self.blackPieces[9]],
                        [self.blackPieces[0],self.blackPieces[1],self.blackPieces[2],self.blackPieces[3],self.blackPieces[4]]]
+
+    def movePiece(self, piece, endLoc):
+        # Moves a piece from one location to another, overriding the piece at the second location if it exists.
+        # Only works if the move is a valid move, function does not move the piece and returns false otherwise.
+
+        if not self.isValidMove(self, piece, endLoc):
+            return False
+        
+        startLoc = piece.getLoc()
+
+        self.board[startLoc[0]][startLoc[1]] = None
+        if self.board[endLoc[0]][endLoc[1]] != None:
+            self.board[endLoc[0]][endLoc[1]].kill()
+        self.board[endLoc[0]][endLoc[1]] = piece
+        piece.moveLoc(endLoc)
+
+        return True
+
     
     def isValidMove(self, piece, endLoc):
         # Takes in a piece and a tuple (ie. (0,4)) representing an position on the board
@@ -28,14 +46,19 @@ class ChessBoard:
         # Move the piece, check if it's in check, then move it back.
         tempboard = self.board.copy()
         self.board[startLoc[0]][startLoc[1]] = None
+        if self.board[endLoc[0]][endLoc[1]] != None:
+            self.board[endLoc[0]][endLoc[1]].kill()
         self.board[endLoc[0]][endLoc[1]] = piece
         piece.moveLoc(endLoc)
+
         if piece.isWhite():
             output = self.isWhiteInCheck()
         else:
             output = self.isBlackInCheck()
         
         self.board = tempboard
+        if self.board[endLoc[0]][endLoc[1]] != None:
+            self.board[endLoc[0]][endLoc[1]].unkill()
         piece.moveLoc(startLoc)
         return output
 
@@ -148,7 +171,7 @@ class ChessBoard:
                 break
         
         for piece in self.blackPieces:
-            if self.isValidMoveNoCheck(piece,whiteKingPos):
+            if piece.isAlive() and self.isValidMoveNoCheck(piece,whiteKingPos):
                 return True
         return False
     
@@ -160,7 +183,10 @@ class ChessBoard:
                 break
         
         for piece in self.whitePieces:
-            if self.isValidMoveNoCheck(piece,whiteKingPos):
+            if piece.isAlive() and self.isValidMoveNoCheck(piece,whiteKingPos):
                 return True
         return False
+    
+    def getBoard(self):
+        return self.board
     

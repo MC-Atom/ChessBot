@@ -21,6 +21,9 @@ class ChessPiece:
     def kill(self):
         self.isAlive = False
     
+    def unkill(self):
+        self.isAlive = True
+
     def isAlive(self):
         return self.isAlive
   
