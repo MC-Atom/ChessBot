@@ -16,11 +16,36 @@ class ChessBoard:
                        [self.blackPieces[5],self.blackPieces[6],self.blackPieces[7],self.blackPieces[8],self.blackPieces[9]],
                        [self.blackPieces[0],self.blackPieces[1],self.blackPieces[2],self.blackPieces[3],self.blackPieces[4]]]
     
-    def isValidMove(self, piece, startLoc, endLoc):
+    def isValidMove(self, piece, endLoc):
+
+        startLoc = piece.getLoc()
+        
+        if not self.isValidMoveNoCheck(self, piece, endLoc):
+            return False
+        
+        # Move the piece, check if it's in check, then move it back.
+        tempboard = self.board.copy()
+        self.board[startLoc[0]][startLoc[1]] = None
+        self.board[endLoc[0]][endLoc[1]] = piece
+        piece.moveLoc(endLoc)
+        if piece.isWhite():
+            output = self.isWhiteInCheck()
+        else:
+            output = self.isBlackInCheck()
+        
+        self.board = tempboard
+        piece.moveLoc(startLoc)
+        return output
+
+
+    def isValidMoveNoCheck(self, piece, endLoc):
         # Takes in two two value long tuples (ie. (0,4)) representing positions on the board
         # Returns whether or not the piece type can legally make that move
         # Does not take checks into consideration
-        if not self.isValidLocation(endLoc):
+
+        startLoc = piece.getLoc()
+
+        if not self.isValidLocation(endLoc) or not self.isValidLocation(startLoc):
             return False
         
         if endLoc == startLoc:
@@ -121,7 +146,7 @@ class ChessBoard:
                 break
         
         for piece in self.blackPieces:
-            if self.isValidMove(piece,piece.getPos(),whiteKingPos):
+            if self.isValidMoveNoCheck(piece,whiteKingPos):
                 return True
         return False
     
@@ -133,7 +158,7 @@ class ChessBoard:
                 break
         
         for piece in self.whitePieces:
-            if self.isValidMove(piece,piece.getPos(),whiteKingPos):
+            if self.isValidMoveNoCheck(piece,whiteKingPos):
                 return True
         return False
     
