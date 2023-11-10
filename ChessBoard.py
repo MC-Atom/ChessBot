@@ -17,6 +17,8 @@ class ChessBoard:
                        [self.blackPieces[0],self.blackPieces[1],self.blackPieces[2],self.blackPieces[3],self.blackPieces[4]]]
     
     def isValidMove(self, piece, endLoc):
+        # Takes in a piece and a tuple (ie. (0,4)) representing an position on the board
+        # Returns whether or not the piece type can legally move to the given position
 
         startLoc = piece.getLoc()
         
@@ -39,8 +41,8 @@ class ChessBoard:
 
 
     def isValidMoveNoCheck(self, piece, endLoc):
-        # Takes in two two value long tuples (ie. (0,4)) representing positions on the board
-        # Returns whether or not the piece type can legally make that move
+        # Takes in a piece and a tuple (ie. (0,4)) representing an position on the board
+        # Returns whether or not the piece type can legally move to the given position
         # Does not take checks into consideration
 
         startLoc = piece.getLoc()
