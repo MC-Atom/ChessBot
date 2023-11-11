@@ -1,5 +1,8 @@
 from ChessPiece import ChessPiece
 
+# Gives a material value for each piece type
+materialValueMap = {"Pawn": 1, "Knight": 3, "Bishop": 3, "Rook": 5, "Queen": 9, "King": 0}
+
 class ChessBoard:
 
     def __init__(self):
@@ -15,19 +18,22 @@ class ChessBoard:
                        [None,None,None,None,None],
                        [self.blackPieces[5],self.blackPieces[6],self.blackPieces[7],self.blackPieces[8],self.blackPieces[9]],
                        [self.blackPieces[0],self.blackPieces[1],self.blackPieces[2],self.blackPieces[3],self.blackPieces[4]]]
+        
+        # Tracks total material values, is updated on piece death
+        self.whiteMaterial, self.blackMaterial = self.evaluateMaterial()
 
     def movePiece(self, piece, endLoc):
         # Moves a piece from one location to another, overriding the piece at the second location if it exists.
         # Only works if the move is a valid move, function does not move the piece and returns false otherwise.
 
-        if not self.isValidMove(self, piece, endLoc):
+        if not self.isValidMove(piece, endLoc):
             return False
         
         startLoc = piece.getLoc()
 
         self.board[startLoc[0]][startLoc[1]] = None
         if self.board[endLoc[0]][endLoc[1]] != None:
-            self.board[endLoc[0]][endLoc[1]].kill()
+            self.killPiece(self.board[endLoc[0]][endLoc[1]])
         self.board[endLoc[0]][endLoc[1]] = piece
         piece.moveLoc(endLoc)
 
@@ -40,7 +46,7 @@ class ChessBoard:
 
         startLoc = piece.getLoc()
         
-        if not self.isValidMoveNoCheck(self, piece, endLoc):
+        if not self.isValidMoveNoCheck(piece, endLoc):
             return False
         
         # Move the piece, check if it's in check, then move it back.
@@ -77,7 +83,7 @@ class ChessBoard:
             # Pieces cannot move to the same spot
             return False
         
-        if self.getPiece(endLoc) != None and (self.getPiece(endLoc).isWhite() == piece.isWhite):
+        if self.getPiece(endLoc) != None and (self.getPiece(endLoc).isWhite() == piece.isWhite()):
             # If there's a piece in the end location and that piece is the same color
             return False
 
@@ -167,7 +173,7 @@ class ChessBoard:
         # Checks the current game board for whether or not the white king is in check
         for piece in self.whitePieces:
             if piece.getPieceType() == "King":
-                whiteKingPos = piece.getPos()
+                whiteKingPos = piece.getLoc()
                 break
         
         for piece in self.blackPieces:
@@ -179,18 +185,36 @@ class ChessBoard:
         # Checks the current game board for whether or not the black king is in check
         for piece in self.blackPieces:
             if piece.getPieceType() == "King":
-                whiteKingPos = piece.getPos()
+                whiteKingPos = piece.getLoc()
                 break
         
         for piece in self.whitePieces:
             if piece.isAlive() and self.isValidMoveNoCheck(piece,whiteKingPos):
                 return True
         return False
+
+    # Kills the piece and removes its material value from its player's total
+    # TODO: Should this method remove the piece from its players piece list?
+    def killPiece(self, piece):
+        piece.kill()
+
+        pieceValue = materialValueMap[piece.pieceType]
+        if piece.isWhite():
+            self.whiteMaterial -= pieceValue
+        else:
+            self.blackMaterial -= pieceValue
+    
+    # Returns a tuple (whiteMaterial, blackMaterial), which is the total material
+    # value of each player on this board
+    def evaluateMaterial(self):
+        whiteMaterial = sum([materialValueMap[piece.pieceType] for piece in self.whitePieces])
+        blackMaterial = sum([materialValueMap[piece.pieceType] for piece in self.blackPieces])
+        return (whiteMaterial, blackMaterial)
     
     def getBoard(self):
         return self.board
     
-    def toString(self):
+    def __str__(self):
         output = "   | "
         for i in range(self.sizeX):
             output += chr(i + 65)

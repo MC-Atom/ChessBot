@@ -2,12 +2,12 @@ class ChessPiece:
 
     def __init__(self, pieceType, isWhite, location):
         self.pieceType = pieceType # A string that should only be one of "Pawn", "King", "Queen", "Knight", "Rook", "Bishop"
-        self.isWhite = isWhite # True if the piece is white, False otherwise (if the piece is black)
+        self.white = isWhite # True if the piece is white, False otherwise (if the piece is black)
         self.location = location
-        self.isAlive = True
+        self.alive = True
 
     def isWhite(self):
-        return self.isWhite
+        return self.white
   
     def getPieceType(self):
         return self.pieceType
@@ -19,17 +19,17 @@ class ChessPiece:
         self.location = newLoc
     
     def kill(self):
-        self.isAlive = False
+        self.alive = False
     
     def unkill(self):
-        self.isAlive = True
+        self.alive = True
 
     def isAlive(self):
-        return self.isAlive
+        return self.alive
 
     def toString(self):
         output = ""
-        if self.isWhite:
+        if self.white:
             output += "W"
         else:
             output += "B"
