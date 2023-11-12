@@ -46,7 +46,7 @@ def parseMove(userIn):
 def convertCoordinate(coord):
     letterToNum = {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5}
     try:
-        return [int(coord[1]) - 1, letterToNum[coord[0]]]
+        return [letterToNum[coord[0]], int(coord[1]) - 1]
     except:
         return False
 
