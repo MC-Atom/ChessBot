@@ -155,7 +155,7 @@ class ChessBoard:
         elif piece.pieceType == "Bishop":
             if endLoc[0] - startLoc[0] == endLoc[1] - startLoc[1]: # If it's moving along y = x
                 for i in range(1,abs(endLoc[0]-startLoc[0])):
-                    if self.getPiece(min(endLoc[0],startLoc[0])+i,min(endLoc[1],startLoc[1])+i) is not None:
+                    if self.getPiece((min(endLoc[0],startLoc[0])+i,min(endLoc[1],startLoc[1])+i)) is not None:
                         return False
                 return True
             elif endLoc[0] - startLoc[0] == -(endLoc[1] - startLoc[1]): # If it's moving along y = -x
