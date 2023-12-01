@@ -83,8 +83,6 @@ class ChessBoard:
         else:
             output = not self.isBlackInCheck()
 
-        print(output)
-
         self.board = tempboard
         if self.board[endLoc[0]][endLoc[1]] != None:
             self.board[endLoc[0]][endLoc[1]].unkill()
