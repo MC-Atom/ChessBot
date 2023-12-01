@@ -165,12 +165,19 @@ class ChessPiece:
         
         validMovesChecked = []
         for endLoc in validMoves:
+            """
+            # Old functions
             # Check to make sure the end location is empty or has an enemy piece in it
             if board.getPiece(endLoc) == None or (board.getPiece(endLoc).isWhite() != self.isWhite()):
                 # Check to make sure the end location is within the bounds of the board
                 if board.isValidLocation(endLoc):
                     validMovesChecked.append(endLoc)
+            """
 
-        return validMoves
+            # Checks if the move is a valid move (checks if it's in check among other things)
+            if board.isValidMove(self.getLoc,endLoc):
+                validMovesChecked.append(endLoc)
+        
+        return validMovesChecked
     
     

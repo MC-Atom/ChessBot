@@ -1,7 +1,5 @@
 from ChessPiece import ChessPiece
 
-# Amogus
-
 # Gives a material value for each piece type
 materialValueMap = {"Pawn": 1, "Knight": 3, "Bishop": 3, "Rook": 5, "Queen": 9, "King": 0}
 
@@ -48,8 +46,6 @@ class ChessBoard:
 
         if not self.isValidMove(piece, endLoc):
             return False
-        
-        print("here")
         
         startLoc = piece.getLoc()
 
@@ -156,7 +152,6 @@ class ChessBoard:
                 return False
             
         elif piece.pieceType == "Knight":
-            print("KINIGHT!!!!")
             return (abs(endLoc[0] - startLoc[0]) == 2 and abs(endLoc[1] - startLoc[1]) == 1) or \
                     (abs(endLoc[0] - startLoc[0]) == 1 and abs(endLoc[1] - startLoc[1]) == 2)
         
