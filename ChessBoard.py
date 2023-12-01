@@ -21,6 +21,25 @@ class ChessBoard:
         # Tracks total material values, is updated on piece death
         self.whiteMaterial, self.blackMaterial = self.evaluateMaterial()
 
+    # Overloaded constructor. Generates a ChessBoard object from a passed in a board matrix
+    def __init__(self, board):
+        self.sizeX = len(board)
+        self.sizeY = len(board[0])
+        self.whitePieces = []
+        self.blackPieces = []
+
+        for row in board:
+            for piece in row:
+                if isinstance(piece,ChessPiece):
+                    if piece.isWhite():
+                        self.whitePieces.append(piece)
+                    else:
+                        self.blackPieces.append(piece)
+        
+        # Tracks total material values, is updated on piece death
+        self.whiteMaterial, self.blackMaterial = self.evaluateMaterial()
+
+
     def movePiece(self, piece, endLoc):
         # Moves a piece from one location to another, overriding the piece at the second location if it exists.
         # Only works if the move is a valid move, function does not move the piece and returns false otherwise.
@@ -236,7 +255,7 @@ class ChessBoard:
             output += str(j+1) + "  |"
             for i in range(self.sizeX):
                 if self.board[i][j] != None:
-                    output += self.board[i][j].toString()
+                    output += self.board[i][j]
                 else:
                     output += "  "
                 output += " |"
