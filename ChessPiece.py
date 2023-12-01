@@ -56,83 +56,112 @@ class ChessPiece:
         if self.pieceType == "Pawn":
             # Takes rules from Quick Chess. Pawns cannot ever move two spaces
             if self.isWhite():
-                endLoc = (self.location[0],self.location+1)
-                if board.getPiece(endLoc) == None: # If there isn't a piece ahead of the pawn
+                # Check if there's a piece in front of the pawn
+                if board.getPiece((self.location[0],self.location[1]+1)) == None: 
+                    validMoves.append((self.location[0],self.location[1]+1))
+                
+                # Check if there's an enemy piece on either side of the pawn
+                if board.getPiece((self.location[0]-1,self.location[1]+1)) != None \
+                and board.getPiece((self.location[0]-1,self.location[1]+1)).isWhite() != self.isWhite:
+                    validMoves.append((self.location[0]-1,self.location[1]+1))
+
+                if board.getPiece((self.location[0]+1,self.location[1]+1)) != None \
+                and board.getPiece((self.location[0]+1,self.location[1]+1)).isWhite() != self.isWhite:
+                    validMoves.append((self.location[0]+1,self.location[1]+1))
+            
+            else:
+                # Check if there's a piece in front of the pawn
+                if board.getPiece((self.location[0],self.location[1]-1)) == None: 
+                    validMoves.append((self.location[0],self.location[1]-1))
+                
+                # Check if there's an enemy piece on either side of the pawn
+                if board.getPiece((self.location[0]-1,self.location[1]-1)) != None \
+                and board.getPiece((self.location[0]-1,self.location[1]-1)).isWhite() != self.isWhite:
+                    validMoves.append((self.location[0]-1,self.location[1]-1))
+
+                if board.getPiece((self.location[0]+1,self.location[1]-1)) != None \
+                and board.getPiece((self.location[0]+1,self.location[1]-1)).isWhite() != self.isWhite:
+                    validMoves.append((self.location[0]+1,self.location[1]-1))
+        
+        elif self.pieceType == "King":
+            # Takes rules from Quick Chess. Castling is not allowed
+
+            # Add all adjacent spaces. 
+            # Checks for pieces in those spaces and whether or not they are on the board are done later
+            validMoves.append((self.location[0]+1,self.location[1]+1))
+            validMoves.append((self.location[0],self.location[1]+1)) 
+            validMoves.append((self.location[0]-1,self.location[1]+1))
+            validMoves.append((self.location[0]-1,self.location[1]))
+            validMoves.append((self.location[0]-1,self.location[1]-1))
+            validMoves.append((self.location[0],self.location[1]-1))
+            validMoves.append((self.location[0]+1,self.location[1]-1))
+            validMoves.append((self.location[0]+1,self.location[1]))
+        
+        elif self.pieceType == "Queen":
+            directions = [(1,1),(1,0),(1,-1),(0,-1),(-1,-1),(-1,0),(-1,1),(0,1)]
+
+            # The piece can move in one of 8 directions
+            for direction in directions:
+                xDif = direction[0]
+                yDif = direction[1]
+
+                endLoc = (self.location[0]+xDif,self.location[1]+yDif)
+
+                # Add all spaces between the piece's location and another piece or an edge of the board
+                while (board.getPiece(endLoc) != None and board.isValidLocation(endLoc)):
                     validMoves.append(endLoc)
 
-                if board.getPiece(endLoc) == None: # If there's not a piece there
-                    return endLoc[0] == startLoc[0] and endLoc[1] == startLoc[1] + 1
-                else: # If there's a piece of the opposite color there
-                    return (endLoc[0] == startLoc[0] + 1 or endLoc[0] == startLoc[0] - 1) and endLoc[1] == startLoc[1] + 1
-            else: # If the piece isn't white
-                if self.getPiece(endLoc) == None: # If there's not a piece there
-                    return endLoc[0] == startLoc[0] and endLoc[1] == startLoc[1] - 1
-                else: # If there's a piece of the opposite color there
-                    return (endLoc[0] == startLoc[0] + 1 or endLoc[0] == startLoc[0] - 1) and endLoc[1] == startLoc[1] - 1
-            
-             
+                    xDif += direction[0]
+                    yDif += direction[1]
+                    endLoc = (self.location[0]+xDif,self.location[1]+yDif)
         
-        elif piece.pieceType == "King":
-            # Takes rules from Quick Chess. Castling is not allowed
-            return abs(endLoc[0] - startLoc[0]) <= 1 and abs(endLoc[1] - startLoc[1]) <= 1 and endLoc != startLoc
-        
-        elif piece.pieceType == "Queen":
-            if endLoc[0] == startLoc[0]: # If it's moving up/down
-                for i in range (min(endLoc[0],startLoc[0])+1,max(endLoc[0],startLoc[0])):
-                    if self.getPiece((i,endLoc[1])) != None: # If there are pieces between the starting pos and ending pos
-                        return False
-                return True
-            elif endLoc[1] == startLoc[1]: # If it's moving left/right
-                for i in range (min(endLoc[1],startLoc[1])+1,max(endLoc[1],startLoc[1])):
-                    if self.getPiece((i,endLoc[0])) != None: # If there are pieces between the starting pos and ending pos
-                        return False
-                return True
-            elif endLoc[0] - startLoc[0] == endLoc[1] - startLoc[1]: # If it's moving along y = x
-                for i in range(1,abs(endLoc[0]-startLoc[0])):
-                    if self.getPiece(min(endLoc[0],startLoc[0])+i,min(endLoc[1],startLoc[1])+i) is not None:
-                        return False
-                return True
-            elif endLoc[0] - startLoc[0] == -(endLoc[1] - startLoc[1]): # If it's moving along y = -x
-                for i in range(1,abs(endLoc[0]-startLoc[0])):
-                    if self.getPiece((min(endLoc[0],startLoc[0])+i,max(endLoc[1],startLoc[1])-i)) is not None:
-                        return False
-            else:
-                return False
-            
-        elif piece.pieceType == "Knight":
-            print("KINIGHT!!!!")
-            return (abs(endLoc[0] - startLoc[0]) == 2 and abs(endLoc[1] - startLoc[1]) == 1) or \
-                    (abs(endLoc[0] - startLoc[0]) == 1 and abs(endLoc[1] - startLoc[1]) == 2)
-        
-        elif piece.pieceType == "Rook":
-            if endLoc[0] == startLoc[0]: # If it's moving up/down
-                for i in range (min(endLoc[0],startLoc[0])+1,max(endLoc[0],startLoc[0])):
-                    if self.getPiece((i,endLoc[1])) != None: # If there are pieces between the starting pos and ending pos
-                        return False
-                return True
-            elif endLoc[1] == startLoc[1]: # If it's moving left/right
-                for i in range (min(endLoc[1],startLoc[1])+1,max(endLoc[1],startLoc[1])):
-                    if self.getPiece((i,endLoc[0])) != None: # If there are pieces between the starting pos and ending pos
-                        return False
-                return True
-            else:
-                return False
+        # Just add all the possible spots a knight can go, sort out whether or not they are correct at the end
+        elif self.pieceType == "Knight":
+            validMoves.append((self.location[0]+1,self.location[1]+2))
+            validMoves.append((self.location[0]-1,self.location[1]+2))
+            validMoves.append((self.location[0]-1,self.location[1]-2))
+            validMoves.append((self.location[0]+1,self.location[1]-2))
 
-        elif piece.pieceType == "Bishop":
-            if endLoc[0] - startLoc[0] == endLoc[1] - startLoc[1]: # If it's moving along y = x
-                for i in range(1,abs(endLoc[0]-startLoc[0])):
-                    if self.getPiece((min(endLoc[0],startLoc[0])+i,min(endLoc[1],startLoc[1])+i)) is not None:
-                        return False
-                return True
-            elif endLoc[0] - startLoc[0] == -(endLoc[1] - startLoc[1]): # If it's moving along y = -x
-                for i in range(1,abs(endLoc[0]-startLoc[0])):
-                    if self.getPiece(min(endLoc[0],startLoc[0])+i,max(endLoc[1],startLoc[1])-i) is not None:
-                        return False
-            else:
-                return False
+            validMoves.append((self.location[0]+2,self.location[1]+1))
+            validMoves.append((self.location[0]-2,self.location[1]+1))
+            validMoves.append((self.location[0]-2,self.location[1]-1))
+            validMoves.append((self.location[0]+2,self.location[1]-1))
         
-        else:
-            return False
+        elif self.pieceType == "Rook":
+            directions = [(0,1),(1,0),(0,-1),(-1,0)]
+
+            # The piece can move in one of 8 directions
+            for direction in directions:
+                xDif = direction[0]
+                yDif = direction[1]
+
+                endLoc = (self.location[0]+xDif,self.location[1]+yDif)
+
+                # Add all spaces between the piece's location and another piece or an edge of the board
+                while (board.getPiece(endLoc) != None and board.isValidLocation(endLoc)):
+                    validMoves.append(endLoc)
+
+                    xDif += direction[0]
+                    yDif += direction[1]
+                    endLoc = (self.location[0]+xDif,self.location[1]+yDif)
+
+        elif self.pieceType == "Bishop":
+            directions = [(1,1),(1,-1),(-1,1),(-1,-1)]
+
+            # The piece can move in one of 8 directions
+            for direction in directions:
+                xDif = direction[0]
+                yDif = direction[1]
+
+                endLoc = (self.location[0]+xDif,self.location[1]+yDif)
+
+                # Add all spaces between the piece's location and another piece or an edge of the board
+                while (board.getPiece(endLoc) != None and board.isValidLocation(endLoc)):
+                    validMoves.append(endLoc)
+
+                    xDif += direction[0]
+                    yDif += direction[1]
+                    endLoc = (self.location[0]+xDif,self.location[1]+yDif)
         
         validMovesChecked = []
         for endLoc in validMoves:

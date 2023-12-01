@@ -101,15 +101,16 @@ class ChessBoard:
 
         startLoc = piece.getLoc()
 
+        # Make sure the start and end locations are on the board
         if not self.isValidLocation(endLoc) or not self.isValidLocation(startLoc):
             return False
         
-        if endLoc == startLoc:
-            # Pieces cannot move to the same spot
+        # Pieces cannot move to the same spot
+        if endLoc == startLoc: 
             return False
         
+        # Return False if there's a piece in the end location and that piece is the same color
         if self.getPiece(endLoc) != None and (self.getPiece(endLoc).isWhite() == piece.isWhite()):
-            # If there's a piece in the end location and that piece is the same color
             return False
 
         if piece.pieceType == "Pawn":
