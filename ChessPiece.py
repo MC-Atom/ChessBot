@@ -12,6 +12,9 @@ class ChessPiece:
     def getPieceType(self):
         return self.pieceType
 
+    def promote(self, type="Queen"):
+        self.pieceType = type
+
     def getLoc(self):
         return self.location
 
@@ -51,6 +54,9 @@ class ChessPiece:
     
     # Returns a list of tuples representing all moves the piece can make on the given board
     def getValidMoves(self,board):
+        if not self.isAlive():
+            return []
+    
         validMoves = []
 
         if self.pieceType == "Pawn":
@@ -106,14 +112,15 @@ class ChessPiece:
                 yDif = direction[1]
 
                 endLoc = (self.location[0]+xDif,self.location[1]+yDif)
+                validMoves.append(endLoc)
 
                 # Add all spaces between the piece's location and another piece or an edge of the board
-                while (board.getPiece(endLoc) != None and board.isValidLocation(endLoc)):
-                    validMoves.append(endLoc)
+                while (board.getPiece(endLoc) == None and board.isValidLocation(endLoc)):
 
                     xDif += direction[0]
                     yDif += direction[1]
                     endLoc = (self.location[0]+xDif,self.location[1]+yDif)
+                    validMoves.append(endLoc)
         
         # Just add all the possible spots a knight can go, sort out whether or not they are correct at the end
         elif self.pieceType == "Knight":
@@ -130,39 +137,43 @@ class ChessPiece:
         elif self.pieceType == "Rook":
             directions = [(0,1),(1,0),(0,-1),(-1,0)]
 
-            # The piece can move in one of 8 directions
+            # The piece can move in one of 4 directions
             for direction in directions:
                 xDif = direction[0]
                 yDif = direction[1]
 
                 endLoc = (self.location[0]+xDif,self.location[1]+yDif)
+                validMoves.append(endLoc)
 
                 # Add all spaces between the piece's location and another piece or an edge of the board
-                while (board.getPiece(endLoc) != None and board.isValidLocation(endLoc)):
-                    validMoves.append(endLoc)
+                while (board.getPiece(endLoc) == None and board.isValidLocation(endLoc)):
 
                     xDif += direction[0]
                     yDif += direction[1]
                     endLoc = (self.location[0]+xDif,self.location[1]+yDif)
+                    validMoves.append(endLoc)
 
         elif self.pieceType == "Bishop":
             directions = [(1,1),(1,-1),(-1,1),(-1,-1)]
 
-            # The piece can move in one of 8 directions
+            # The piece can move in one of 4 directions
             for direction in directions:
                 xDif = direction[0]
                 yDif = direction[1]
 
                 endLoc = (self.location[0]+xDif,self.location[1]+yDif)
+                validMoves.append(endLoc)
 
                 # Add all spaces between the piece's location and another piece or an edge of the board
-                while (board.getPiece(endLoc) != None and board.isValidLocation(endLoc)):
-                    validMoves.append(endLoc)
+                while (board.getPiece(endLoc) == None and board.isValidLocation(endLoc)):
 
                     xDif += direction[0]
                     yDif += direction[1]
                     endLoc = (self.location[0]+xDif,self.location[1]+yDif)
+                    validMoves.append(endLoc)
         
+        #print("\033[33m",self,validMoves,"\033[0m")
+
         validMovesChecked = []
         for endLoc in validMoves:
             """
@@ -175,9 +186,10 @@ class ChessPiece:
             """
 
             # Checks if the move is a valid move (checks if it's in check among other things)
-            if board.isValidMove(self.getLoc,endLoc):
+            if board.isValidMove(self,endLoc):
                 validMovesChecked.append(endLoc)
         
+        #print("\033[32m",self,validMovesChecked,"\033[0m")
         return validMovesChecked
     
     

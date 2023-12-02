@@ -1,4 +1,5 @@
 from ChessBoard import ChessBoard
+from Bot import Bot
 
 # If set to True, allows any piece to be moved regardless of whose turn it is
 # Might be useful for faster testing
@@ -12,19 +13,32 @@ def playGame():
     while True:
         print()
         print(board)
-        print("\n" + "=" * 20 + "\n")
-        move = input("Enter a move (" + turn + "'s Turn): ")
+        print("\n" + "=" * 20 + "\n" + "Turn:",turn)
+        if turn == "White":
+            if board.whoWhiteInCheck() != None:
+                print("White in check from",board.whoWhiteInCheck())
+        else:
+            if board.whoBlackInCheck() != None:
+                print("Black in check from",board.whoBlackInCheck())
+
+        #move = input("Enter a move (" + turn + "'s Turn): ")
+        move = "bot"
 
         if move == "exit":
             exit()
+        elif move == "bot":
+            bot = Bot(True if turn == "White" else False, board)
+            start, end = bot.nextMoveFormated(board)
+            print(f"start: {start} ; end: {end}")
+        else:
 
-        # Attempt to parse user input into usable board coordinates
-        parsedMove = parseMove(move)
-        if not parsedMove:
-            print("ERROR: Move is badly formatted. Should be [a-f][1-6][a-f][1-6]")
-            continue
+            # Attempt to parse user input into usable board coordinates
+            parsedMove = parseMove(move)
+            if not parsedMove:
+                print("ERROR: Move is badly formatted. Should be [a-f][1-6][a-f][1-6]")
+                continue
         
-        start, end = parsedMove
+            start, end = parsedMove
 
         # Check that the piece being moved exists
         piece = board.getPiece(start)

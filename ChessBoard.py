@@ -5,39 +5,48 @@ materialValueMap = {"Pawn": 1, "Knight": 3, "Bishop": 3, "Rook": 5, "Queen": 9, 
 
 class ChessBoard:
 
-    def __init__(self):
-        self.sizeX = 5 # how many squares wide the board is
-        self.sizeY = 6 # how many squares tall the board is
-        self.whitePieces = [ChessPiece("Knight",True,(0,0)),ChessPiece("Queen",True,(1,0)),ChessPiece("King",True,(2,0)),ChessPiece("Bishop",True,(3,0)),ChessPiece("Rook",True,(4,0)),
-                            ChessPiece("Pawn",True,(0,1)),ChessPiece("Pawn",True,(1,1)),ChessPiece("Pawn",True,(2,1)),ChessPiece("Pawn",True,(3,1)),ChessPiece("Pawn",True,(4,1))]
-        self.blackPieces = [ChessPiece("Knight",False,(0,5)),ChessPiece("Queen",False,(1,5)),ChessPiece("King",False,(2,5)),ChessPiece("Bishop",False,(3,5)),ChessPiece("Rook",False,(4,5)),
-                            ChessPiece("Pawn",False,(0,4)),ChessPiece("Pawn",False,(1,4)),ChessPiece("Pawn",False,(2,4)),ChessPiece("Pawn",False,(3,4)),ChessPiece("Pawn",False,(4,4))]
-        self.board =  [[self.whitePieces[0],self.whitePieces[5],None,None,self.blackPieces[5],self.blackPieces[0]],
-                        [self.whitePieces[1],self.whitePieces[6],None,None,self.blackPieces[6],self.blackPieces[1]],
-                        [self.whitePieces[2],self.whitePieces[7],None,None,self.blackPieces[7],self.blackPieces[2]],
-                        [self.whitePieces[3],self.whitePieces[8],None,None,self.blackPieces[8],self.blackPieces[3]],
-                        [self.whitePieces[4],self.whitePieces[9],None,None,self.blackPieces[9],self.blackPieces[4]]]
+    def __init__(self,board=None):
+        if board == None:
+            self.sizeX = 5 # how many squares wide the board is
+            self.sizeY = 6 # how many squares tall the board is
+            self.whitePieces = [ChessPiece("Knight",True,(0,0)),ChessPiece("Queen",True,(1,0)),ChessPiece("King",True,(2,0)),ChessPiece("Bishop",True,(3,0)),ChessPiece("Rook",True,(4,0)),
+                                ChessPiece("Pawn",True,(0,1)),ChessPiece("Pawn",True,(1,1)),ChessPiece("Pawn",True,(2,1)),ChessPiece("Pawn",True,(3,1)),ChessPiece("Pawn",True,(4,1))]
+            self.blackPieces = [ChessPiece("Knight",False,(0,5)),ChessPiece("Queen",False,(1,5)),ChessPiece("King",False,(2,5)),ChessPiece("Bishop",False,(3,5)),ChessPiece("Rook",False,(4,5)),
+                                ChessPiece("Pawn",False,(0,4)),ChessPiece("Pawn",False,(1,4)),ChessPiece("Pawn",False,(2,4)),ChessPiece("Pawn",False,(3,4)),ChessPiece("Pawn",False,(4,4))]
+            self.board =  [[self.whitePieces[0],self.whitePieces[5],None,None,self.blackPieces[5],self.blackPieces[0]],
+                            [self.whitePieces[1],self.whitePieces[6],None,None,self.blackPieces[6],self.blackPieces[1]],
+                            [self.whitePieces[2],self.whitePieces[7],None,None,self.blackPieces[7],self.blackPieces[2]],
+                            [self.whitePieces[3],self.whitePieces[8],None,None,self.blackPieces[8],self.blackPieces[3]],
+                            [self.whitePieces[4],self.whitePieces[9],None,None,self.blackPieces[9],self.blackPieces[4]]]
 
-        # Tracks total material values, is updated on piece death
-        self.whiteMaterial, self.blackMaterial = self.evaluateMaterial()
+            # Tracks total material values, is updated on piece death
+            self.whiteMaterial, self.blackMaterial = self.evaluateMaterial()
 
-    # Overloaded constructor. Generates a ChessBoard object from a passed in a board matrix
-    def __init__(self, board):
-        self.sizeX = len(board)
-        self.sizeY = len(board[0])
-        self.whitePieces = []
-        self.blackPieces = []
+    # Faking an overloaded constructor. Generates a ChessBoard object from a passed in a board matrix
+        """ Replaced with copy.deepcopy()
+        else:
+            self.board = board
+            self.sizeX = len(board)
+            self.sizeY = len(board[0])
+            self.whitePieces = []
+            self.blackPieces = []
+            
+            # Make copies of all the pieces so they don't get overwritten
+            for x in range(self.sizeX):
+                for y in range(self.sizeY):
+                    if isinstance(board[x][y],ChessPiece):
+                        oldPiece = board[x][y]
+                        newPiece = ChessPiece(oldPiece.getPieceType(),oldPiece.isWhite(),oldPiece.getLoc())
+                        board[x][y] = newPiece
 
-        for row in board:
-            for piece in row:
-                if isinstance(piece,ChessPiece):
-                    if piece.isWhite():
-                        self.whitePieces.append(piece)
-                    else:
-                        self.blackPieces.append(piece)
-        
-        # Tracks total material values, is updated on piece death
-        self.whiteMaterial, self.blackMaterial = self.evaluateMaterial()
+                        if newPiece.isWhite():
+                            self.whitePieces.append(newPiece)
+                        else:
+                            self.blackPieces.append(newPiece)
+            
+            # Tracks total material values, is updated on piece death
+            self.whiteMaterial, self.blackMaterial = self.evaluateMaterial()
+            """
 
 
     def movePiece(self, piece, endLoc):
@@ -54,7 +63,12 @@ class ChessBoard:
             self.killPiece(self.board[endLoc[0]][endLoc[1]])
         self.board[endLoc[0]][endLoc[1]] = piece
         piece.moveLoc(endLoc)
-        print(piece.getLoc())
+
+        # If the piece is a pawn and it's at one of the extremes of the board, promote it
+        if piece.getPieceType() == "Pawn" and \
+            (piece.getLoc()[1] == 0 or piece.getLoc()[1] == 5):
+            # Handle input for different types if time allows
+            piece.promote("Queen")
 
         return True
 
@@ -127,19 +141,19 @@ class ChessBoard:
             return abs(endLoc[0] - startLoc[0]) <= 1 and abs(endLoc[1] - startLoc[1]) <= 1 and endLoc != startLoc
         
         elif piece.pieceType == "Queen":
-            if endLoc[0] == startLoc[0]: # If it's moving up/down
+            if endLoc[1] == startLoc[1]: # If it's moving left/right
                 for i in range (min(endLoc[0],startLoc[0])+1,max(endLoc[0],startLoc[0])):
                     if self.getPiece((i,endLoc[1])) != None: # If there are pieces between the starting pos and ending pos
                         return False
                 return True
-            elif endLoc[1] == startLoc[1]: # If it's moving left/right
+            elif endLoc[0] == startLoc[0]: # If it's moving up/down
                 for i in range (min(endLoc[1],startLoc[1])+1,max(endLoc[1],startLoc[1])):
                     if self.getPiece((i,endLoc[0])) != None: # If there are pieces between the starting pos and ending pos
                         return False
                 return True
             elif endLoc[0] - startLoc[0] == endLoc[1] - startLoc[1]: # If it's moving along y = x
                 for i in range(1,abs(endLoc[0]-startLoc[0])):
-                    if self.getPiece(min(endLoc[0],startLoc[0])+i,min(endLoc[1],startLoc[1])+i) is not None:
+                    if self.getPiece((min(endLoc[0],startLoc[0])+i,min(endLoc[1],startLoc[1])+i)) is not None:
                         return False
                 return True
             elif endLoc[0] - startLoc[0] == -(endLoc[1] - startLoc[1]): # If it's moving along y = -x
@@ -154,12 +168,12 @@ class ChessBoard:
                     (abs(endLoc[0] - startLoc[0]) == 1 and abs(endLoc[1] - startLoc[1]) == 2)
         
         elif piece.pieceType == "Rook":
-            if endLoc[0] == startLoc[0]: # If it's moving up/down
+            if endLoc[1] == startLoc[1]: # If it's moving left/right
                 for i in range (min(endLoc[0],startLoc[0])+1,max(endLoc[0],startLoc[0])):
                     if self.getPiece((i,endLoc[1])) != None: # If there are pieces between the starting pos and ending pos
                         return False
                 return True
-            elif endLoc[1] == startLoc[1]: # If it's moving left/right
+            elif endLoc[0] == startLoc[0]: # If it's moving up/down
                 for i in range (min(endLoc[1],startLoc[1])+1,max(endLoc[1],startLoc[1])):
                     if self.getPiece((i,endLoc[0])) != None: # If there are pieces between the starting pos and ending pos
                         return False
@@ -175,7 +189,7 @@ class ChessBoard:
                 return True
             elif endLoc[0] - startLoc[0] == -(endLoc[1] - startLoc[1]): # If it's moving along y = -x
                 for i in range(1,abs(endLoc[0]-startLoc[0])):
-                    if self.getPiece(min(endLoc[0],startLoc[0])+i,max(endLoc[1],startLoc[1])-i) is not None:
+                    if self.getPiece( (min(endLoc[0],startLoc[0])+i , max(endLoc[1],startLoc[1])-i) ) is not None:
                         return False
             else:
                 return False
@@ -194,7 +208,7 @@ class ChessBoard:
         # Checks whether or not the given location is on the game board
         return location[0] >= 0 and location[1] >= 0 and location[0] < self.sizeX and location[1] < self.sizeY
     
-    def isWhiteInCheck(self):
+    def whoWhiteInCheck(self):
         # Checks the current game board for whether or not the white king is in check
         for piece in self.whitePieces:
             if piece.getPieceType() == "King":
@@ -203,10 +217,11 @@ class ChessBoard:
         
         for piece in self.blackPieces:
             if piece.isAlive() and self.isValidMoveNoCheck(piece,kingPos):
-                return True
-        return False
+                #print("White King in check from",piece)
+                return piece
+        return None
     
-    def isBlackInCheck(self):
+    def whoBlackInCheck(self):
         # Checks the current game board for whether or not the black king is in check
         for piece in self.blackPieces:
             if piece.getPieceType() == "King":
@@ -214,9 +229,18 @@ class ChessBoard:
                 break
         
         for piece in self.whitePieces:
-            if piece.isAlive() and self.isValidMoveNoCheck(piece,kingPos):\
-                return True
-        return False
+            if piece.isAlive() and self.isValidMoveNoCheck(piece,kingPos):
+                #print("Black King in check from",piece)
+                return piece
+        return None
+    
+    def isWhiteInCheck(self):
+        # Checks the current game board for whether or not the white king is in check
+        return not self.whoWhiteInCheck() == None
+    
+    def isBlackInCheck(self):
+        # Checks the current game board for whether or not the black king is in check
+        return not self.whoBlackInCheck() == None
 
     # Kills the piece and removes its material value from its player's total
     # TODO: Should this method remove the piece from its players piece list?
@@ -232,9 +256,17 @@ class ChessBoard:
     # Returns a tuple (whiteMaterial, blackMaterial), which is the total material
     # value of each player on this board
     def evaluateMaterial(self):
-        whiteMaterial = sum([materialValueMap[piece.pieceType] for piece in self.whitePieces])
-        blackMaterial = sum([materialValueMap[piece.pieceType] for piece in self.blackPieces])
-        return (whiteMaterial, blackMaterial)
+        whiteMaterial = 0
+        for piece in self.whitePieces:
+            if piece.isAlive():
+                whiteMaterial += materialValueMap[piece.pieceType]
+
+        blackMaterial = 0
+        for piece in self.blackPieces:
+            if piece.isAlive():
+                blackMaterial += materialValueMap[piece.pieceType]
+
+        return whiteMaterial, blackMaterial
     
     def getBoard(self):
         return self.board
@@ -251,7 +283,7 @@ class ChessBoard:
             output += str(j+1) + "  |"
             for i in range(self.sizeX):
                 if self.board[i][j] != None:
-                    output += self.board[i][j]
+                    output += str(self.board[i][j])
                 else:
                     output += "  "
                 output += " |"
