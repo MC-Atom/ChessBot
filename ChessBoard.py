@@ -21,6 +21,7 @@ class ChessBoard:
 
             # Tracks total material values, is updated on piece death
             self.whiteMaterial, self.blackMaterial = self.evaluateMaterial()
+    
 
     # Faking an overloaded constructor. Generates a ChessBoard object from a passed in a board matrix
         """ Replaced with copy.deepcopy()
@@ -141,7 +142,16 @@ class ChessBoard:
             return abs(endLoc[0] - startLoc[0]) <= 1 and abs(endLoc[1] - startLoc[1]) <= 1 and endLoc != startLoc
         
         elif piece.pieceType == "Queen":
-            if endLoc[1] == startLoc[1]: # If it's moving left/right
+            if endLoc[0] - startLoc[0] == endLoc[1] - startLoc[1]: # If it's moving along y = x
+                for i in range(1,abs(endLoc[0]-startLoc[0])):
+                    if self.getPiece((min(endLoc[0],startLoc[0])+i,min(endLoc[1],startLoc[1])+i)) is not None:
+                        return False
+                return True
+            elif endLoc[0] - startLoc[0] == -(endLoc[1] - startLoc[1]): # If it's moving along y = -x
+                for i in range(1,abs(endLoc[0]-startLoc[0])):
+                    if self.getPiece((min(endLoc[0],startLoc[0])+i,max(endLoc[1],startLoc[1])-i)) is not None:
+                        return False
+            elif endLoc[1] == startLoc[1]: # If it's moving left/right
                 for i in range (min(endLoc[0],startLoc[0])+1,max(endLoc[0],startLoc[0])):
                     if self.getPiece((i,endLoc[1])) != None: # If there are pieces between the starting pos and ending pos
                         return False
@@ -151,15 +161,6 @@ class ChessBoard:
                     if self.getPiece((i,endLoc[0])) != None: # If there are pieces between the starting pos and ending pos
                         return False
                 return True
-            elif endLoc[0] - startLoc[0] == endLoc[1] - startLoc[1]: # If it's moving along y = x
-                for i in range(1,abs(endLoc[0]-startLoc[0])):
-                    if self.getPiece((min(endLoc[0],startLoc[0])+i,min(endLoc[1],startLoc[1])+i)) is not None:
-                        return False
-                return True
-            elif endLoc[0] - startLoc[0] == -(endLoc[1] - startLoc[1]): # If it's moving along y = -x
-                for i in range(1,abs(endLoc[0]-startLoc[0])):
-                    if self.getPiece((min(endLoc[0],startLoc[0])+i,max(endLoc[1],startLoc[1])-i)) is not None:
-                        return False
             else:
                 return False
             

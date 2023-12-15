@@ -21,8 +21,8 @@ def playGame():
             if board.whoBlackInCheck() != None:
                 print("Black in check from",board.whoBlackInCheck())
 
-        #move = input("Enter a move (" + turn + "'s Turn): ")
-        move = "bot"
+        move = input("Enter a move (" + turn + "'s Turn): ")
+        #move = "bot"
 
         if move == "exit":
             exit()
@@ -88,3 +88,12 @@ def convertCoordinate(coord):
 
 if __name__ == '__main__':
     playGame()
+
+
+"""
+[[None,None,ChessPiece("Bishop",False,(0,2)),None,None,None],
+[None,None,None,None,None,None],
+[ChessPiece("King",False,(2,0)),None,None,None,None,None],
+[None,None,None,None,None,None],
+[None,None,None,None,None,None]]
+"""
